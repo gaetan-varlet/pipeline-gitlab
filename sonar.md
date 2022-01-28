@@ -36,7 +36,7 @@ System.out.println("comparaison même objet avec == : " + compar3); // true
 - 1708 cas sur les projets sur Sonar
 
 
-### Exemples avec un BufferedREader
+### Exemples avec un BufferedReader
 
 ```java
 // NON CONFORME
