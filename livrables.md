@@ -1,4 +1,4 @@
-# Création des livrables et déploiement automatique par pipeline
+# Création des livrables avec Maven
 
 ## Rappel sur les phases Maven
 
@@ -10,11 +10,10 @@
 - `install` => installe le livrable dans le dépôt local, pour l'utiliser comme dépendance dans d'autres projets locaux
 - `deploy` => copie le paquet final dans le dépôt distant pour le partager avec d'autres développeurs et projets
 
-## Création des livrables avec Maven
+
+## Ce qu'on va faire
 
 **DISCLAIMER** : properties des différents environnements dans le code source, la sortie du code source se fera dans une présentation future
-
-### Ce qu'on va faire
 
 Projet **project** avec 3 modules, en version 2.0.0
 - **project-core** en version 1.0.0
@@ -29,7 +28,7 @@ Livrables pour le module BATCH :
 - création d'un jar **project-batch-1.2.0.jar**
 - création d'un zip **project-batch-1.2.0.zip** contenant un dossier lib avec le JAR du batch et toutes les bibliothèques nécessaires au fonctionnement
 
-### Comment le faire
+## Comment le faire
 
 Utilisation de **Maven Assembly Plugin**
 - plugin qui permet combiner les résultats d'un projet en une seule archive distribuable qui contient également les dépendances, les modules, la documentation du site et d'autres fichiers.
@@ -37,7 +36,7 @@ Utilisation de **Maven Assembly Plugin**
 - utilisation du **goal single**, seul goal devant utilisé aujourd'hui, qui permet d'assembler une application à partir d'un descripteur. Cet objectif peut être lié au cycle de vie (`mvn package`) ou appelé directement depuis la ligne de commande (`mvn package assembly:single`)
 
 
-**Configuration module batch**
+### Configuration module batch
 
 POM du module batch :
 ```xml
@@ -119,7 +118,7 @@ Descripteur du module batch :
 </assembly>
 ```
 
-**Configuration module web**
+### Configuration module web
 
 POM du module web :
 ```xml
@@ -206,5 +205,3 @@ Descripteur du module web :
 	</files>
 </assembly>
 ```
-
-## Livraison par pipeline Gitlab
