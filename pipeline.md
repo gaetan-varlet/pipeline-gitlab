@@ -16,8 +16,3 @@
 ## Mise en place
 
 Création du fichier `.gitlab-ci.yml` à la racine du projet
-
-```yml
-variables:
-  URL_NEXUS: nexus.insee.fr
-```
