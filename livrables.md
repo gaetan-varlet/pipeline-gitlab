@@ -46,7 +46,7 @@ POM du module batch :
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>fr.insee</groupId>
-    <artifactId>parent-project</artifactId>
+    <artifactId>project</artifactId>
     <version>2.0.0</version>
   </parent>
 
@@ -128,7 +128,7 @@ POM du module web :
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>fr.insee</groupId>
-    <artifactId>parent-project</artifactId>
+    <artifactId>project</artifactId>
     <version>2.0.0</version>
   </parent>
 
