@@ -32,7 +32,7 @@ Livrables pour le module BATCH :
 Utilisation de **Maven Assembly Plugin**
 - plugin qui permet combiner les résultats d'un projet en une seule archive distribuable qui contient également les dépendances, les modules, la documentation du site et d'autres fichiers.
 - permet de construire des assemblages de distribution en utilisant l'un des descripteurs préfabriqués. Alternativement, votre projet peut fournir son propre descripteur et assumer un niveau de contrôle beaucoup plus élevé sur la façon dont les dépendances, les modules, les ensembles de fichiers et les fichiers individuels sont empaquetés dans l'assemblage
-- utilisation du **goal single**, seul goal devant utilisé aujourd'hui, qui permet d'assembler une application à partir d'un descripteur. Cet objectif peut être lié au cycle de vie (`mvn clean package`) ou appelé directement depuis la ligne de commande (`mvn clean package assembly:single`)
+- utilisation du **goal single**, seul goal devant utilisé aujourd'hui, qui permet d'assembler une application à partir d'un descripteur. Cet objectif peut être lié au cycle de vie (`mvn package`) ou appelé directement depuis la ligne de commande (`mvn package assembly:single`)
 
 
 ```xml
