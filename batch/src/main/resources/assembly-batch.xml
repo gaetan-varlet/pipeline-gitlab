@@ -12,5 +12,4 @@
 			<outputDirectory>lib</outputDirectory>
 		</dependencySet>
 	</dependencySets>
-
 </assembly>

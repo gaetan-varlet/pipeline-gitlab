@@ -37,30 +37,59 @@ Utilisation de **Maven Assembly Plugin**
 - utilisation du **goal single**, seul goal devant utilisé aujourd'hui, qui permet d'assembler une application à partir d'un descripteur. Cet objectif peut être lié au cycle de vie (`mvn package`) ou appelé directement depuis la ligne de commande (`mvn package assembly:single`)
 
 
+**Configuration module batch**
+
 ```xml
-<plugins>
-	<plugin>
-		<artifactId>maven-assembly-plugin</artifactId>
-		<version>3.3.0</version>
-		<configuration>
-			<descriptors>
-			<descriptor>src/main/resources/assembly-batch.xml</descriptor>
-			</descriptors>
-			<!-- changer le nom du zip, par défaut même nom que le jar -->
-			<finalName>project-batch</finalName>
-		</configuration>
-		<executions>
-			<execution>
-			<id>make-assembly</id>
-			<!-- permet de lier l'assembly dans le cycle de vie de construction du livrable -->
-			<phase>package</phase>
-			<goals>
-				<goal>single</goal>
-			</goals>
-			</execution>
-		</executions>
-	</plugin>
-</plugins>
+<build>
+    <!-- permet de lire les propriétés maven dans les properties -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/resources/assembly-batch.xml</descriptor>
+          </descriptors>
+          <!-- changer le nom du zip, par défaut même nom que le jar -->
+          <finalName>project-batch</finalName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <!-- permet de lier l'assembly dans le cycle de vie de construction du livrable -->
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+</build>
+```
+
+```xml
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>${project.version}</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<!-- permet de ne pas créer de dossier contenant les éléments dans le zip -->
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+</assembly>
 ```
 
 
