@@ -38,6 +38,7 @@ Utilisation de **Maven Assembly Plugin**
 <plugins>
 	<plugin>
 	<artifactId>maven-assembly-plugin</artifactId>
+	<version>3.3.0</version>
 	<executions>
 		<execution>
 		<id>make-assembly</id>
@@ -49,7 +50,8 @@ Utilisation de **Maven Assembly Plugin**
 			<descriptors>
 			<descriptor>src/main/resources/assembly-batch.xml</descriptor>
 			</descriptors>
-			<finalName>project-batch-${project.version}</finalName>              <!-- changer le nom du zip, par défaut même nom que le jar -->
+			<!-- changer le nom du zip, par défaut même nom que le jar -->
+			<finalName>project-batch</finalName>
 		</configuration>
 		</execution>
 	</executions>

@@ -29,10 +29,11 @@
         <filtering>true</filtering>
       </resource>
     </resources>
-    <finalName>ROOT</finalName>    <!-- définit le nom du WAR -->
+    <finalName>ROOT</finalName>    <!-- définit le nom du WAR, par défaut ${artifactId}-${version} -->
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -44,7 +45,8 @@
               <descriptors>
                 <descriptor>src/main/resources/assembly-web.xml</descriptor>
               </descriptors>
-              <finalName>project-${project.version}</finalName>              <!-- définit le nom du ZIP, par défaut même nom que le WAR -->
+              <!-- définit le nom du ZIP, par défaut même nom que le WAR -->
+              <finalName>project</finalName>
             </configuration>
           </execution>
         </executions>
