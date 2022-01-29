@@ -12,7 +12,7 @@ variables:
   URL_NEXUS: nexus.insee.fr
   URL_MAJIBA: "https://api.majiba.insee.fr/application/project/deploy"
   MAJIBA_API_TOKEN:
-  SONAR_URL:
+  SONAR_URL: https://sonar.insee.fr
   SONAR_TOKEN:
   FTP_PROJECT_WEB_DEV_SERVER:
   FTP_PROJECT_WEB_DEV_USERNAME:
