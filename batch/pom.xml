@@ -33,20 +33,21 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.3.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/resources/assembly-batch.xml</descriptor>
+          </descriptors>
+          <!-- changer le nom du zip, par défaut même nom que le jar -->
+          <finalName>project-batch</finalName>
+        </configuration>
         <executions>
           <execution>
             <id>make-assembly</id>
+            <!-- permet de lier l'assembly dans le cycle de vie de construction du livrable -->
             <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/resources/assembly-batch.xml</descriptor>
-              </descriptors>
-              <!-- changer le nom du zip, par défaut même nom que le jar -->
-              <finalName>project-batch</finalName>
-            </configuration>
           </execution>
         </executions>
       </plugin>

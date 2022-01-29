@@ -32,20 +32,14 @@ Livrables pour le module BATCH :
 Utilisation de **Maven Assembly Plugin**
 - plugin qui permet combiner les résultats d'un projet en une seule archive distribuable qui contient également les dépendances, les modules, la documentation du site et d'autres fichiers.
 - permet de construire des assemblages de distribution en utilisant l'un des descripteurs préfabriqués. Alternativement, votre projet peut fournir son propre descripteur et assumer un niveau de contrôle beaucoup plus élevé sur la façon dont les dépendances, les modules, les ensembles de fichiers et les fichiers individuels sont empaquetés dans l'assemblage
+- utilisation du **goal single**, seul goal devant utilisé aujourd'hui, qui permet d'assembler une application à partir d'un descripteur. Cet objectif peut être lié au cycle de vie (`mvn clean package`) ou appelé directement depuis la ligne de commande (`mvn clean package assembly:single`)
 
 
 ```xml
 <plugins>
 	<plugin>
-	<artifactId>maven-assembly-plugin</artifactId>
-	<version>3.3.0</version>
-	<executions>
-		<execution>
-		<id>make-assembly</id>
-		<phase>package</phase>
-		<goals>
-			<goal>single</goal>
-		</goals>
+		<artifactId>maven-assembly-plugin</artifactId>
+		<version>3.3.0</version>
 		<configuration>
 			<descriptors>
 			<descriptor>src/main/resources/assembly-batch.xml</descriptor>
@@ -53,8 +47,16 @@ Utilisation de **Maven Assembly Plugin**
 			<!-- changer le nom du zip, par défaut même nom que le jar -->
 			<finalName>project-batch</finalName>
 		</configuration>
-		</execution>
-	</executions>
+		<executions>
+			<execution>
+			<id>make-assembly</id>
+			<!-- permet de lier l'assembly dans le cycle de vie de construction du livrable -->
+			<phase>package</phase>
+			<goals>
+				<goal>single</goal>
+			</goals>
+			</execution>
+		</executions>
 	</plugin>
 </plugins>
 ```
