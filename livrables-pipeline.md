@@ -16,7 +16,7 @@
 
 ### Ce qu'on va faire
 
-Projet **project** avec 3 modules
+Projet **project** avec 3 modules, en version 2.0.0
 - **project-core** en version 1.0.0
 - **project-web** en version 1.1.0
 - **project-batch** en version 1.2.0
@@ -39,8 +39,32 @@ Utilisation de **Maven Assembly Plugin**
 
 **Configuration module batch**
 
+POM du module batch :
 ```xml
-<build>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>fr.insee</groupId>
+    <artifactId>parent-project</artifactId>
+    <version>2.0.0</version>
+  </parent>
+
+  <groupId>fr.insee</groupId>
+  <artifactId>project-batch</artifactId>
+  <version>1.2.0</version>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>fr.insee</groupId>
+      <artifactId>project-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
     <!-- permet de lire les propriétés maven dans les properties -->
     <resources>
       <resource>
@@ -71,9 +95,12 @@ Utilisation de **Maven Assembly Plugin**
         </executions>
       </plugin>
     </plugins>
-</build>
+  </build>
+
+</project>
 ```
 
+Descripteur du module batch :
 ```xml
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
@@ -92,5 +119,92 @@ Utilisation de **Maven Assembly Plugin**
 </assembly>
 ```
 
+**Configuration module web**
+
+POM du module web :
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>fr.insee</groupId>
+    <artifactId>parent-project</artifactId>
+    <version>2.0.0</version>
+  </parent>
+
+  <groupId>fr.insee</groupId>
+  <artifactId>project-web</artifactId>
+  <version>1.1.0</version>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>fr.insee</groupId>
+      <artifactId>project-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- permet de lire les propriétés maven dans les properties -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <finalName>ROOT</finalName>    <!-- définit le nom du WAR, par défaut ${artifactId}-${version} -->
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/resources/assembly-web.xml</descriptor>
+          </descriptors>
+          <!-- définit le nom du ZIP, par défaut même nom que le WAR -->
+          <finalName>project</finalName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+```
+
+Descripteur du module web :
+```xml
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+	<id>${project.version}</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<files>
+		<file>
+			<source>target/ROOT.war</source>
+			<outputDirectory />
+			<destName>project.war</destName>
+		</file>
+		<file>
+			<source>src/main/resources/project.properties.PROD</source>
+			<outputDirectory />
+			<destName>project.properties</destName>
+		</file>
+	</files>
+</assembly>
+```
 
 ## Livraison par pipeline Gitlab
