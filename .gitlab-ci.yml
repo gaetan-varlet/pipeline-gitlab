@@ -1,8 +1,5 @@
 variables:
-  URL_NEXUS: nexus.insee.fr
-  URL_MAJIBA: "https://api.majiba.insee.fr/application/project/deploy"
   APPLICATION_NAME: project
-  LISTE_MAILS: "a.b@x.fr;c.d@x.fr"
   MODULE_MAVEN_WEB: web
   CHEMIN_WAR_WEB: ./web/target/ROOT.war
   CHEMIN_NEXUS_WEB: "https://nexus.insee.fr/repository/depot-local/domaine/project/web"
@@ -11,6 +8,17 @@ variables:
   MODULE_MAVEN_BATCH: batch
   CHEMIN_NEXUS_BATCH: "https://nexus.insee.fr/repository/depot-local/domaine/project/batch"
   FICHIER_PROPERTIES_BATCH: project-batch.properties
+  LISTE_MAILS: "a.b@x.fr;c.d@x.fr"
+  URL_NEXUS: nexus.insee.fr
+  URL_MAJIBA: "https://api.majiba.insee.fr/application/project/deploy"
+  MAJIBA_API_TOKEN:
+  SONAR_URL:
+  SONAR_TOKEN:
+  FTP_PROJECT_WEB_DEV_SERVER:
+  FTP_PROJECT_WEB_DEV_USERNAME:
+  FTP_PROJECT_PASSWORD:
+  FTP_PROJECT_BATCH_DEV_SERVER:
+  FTP_PROJECT_BATCH_DEV_USERNAME:
 
 default:
   tags:
@@ -102,7 +110,7 @@ deploy-web-dev:
     - job-package
   script:
     - curl --upload-file $CHEMIN_WAR_WEB "ftp://$FTP_PROJECT_WEB_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_WEB_DEV_SERVER/depot/"
-    - curl --upload-file ./$MODULE_MAVEN_WEB/src/main/resources/$FICHIER_PROPERTIES_WEB.DEV "ftp://$FTP_PROJECT_WEB_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_WEB_DEV_SERVER/depot/$FICHIER_PROPERTIES_API"
+    - curl --upload-file ./$MODULE_MAVEN_WEB/src/main/resources/$FICHIER_PROPERTIES_WEB.DEV "ftp://$FTP_PROJECT_WEB_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_WEB_DEV_SERVER/depot/$FICHIER_PROPERTIES_WEB"
   when: manual
 
 prod-web-1-nexus:
@@ -116,8 +124,8 @@ prod-web-1-nexus:
     - echo "MODULE_MAVEN :" $MODULE_MAVEN
     - *script_version
     - mvn clean package -DskipTests
-    - curl --noproxy $URL_NEXUS --insecure --upload-file ./$MODULE_MAVEN/target/$APPLICATION_NAME-$VERSION.zip $CHEMIN_NEXUS_API/
-  rules: *rules_only_main_or_tag
+    - curl --noproxy $URL_NEXUS --insecure --upload-file ./$MODULE_MAVEN/target/$APPLICATION_NAME-$VERSION.zip $CHEMIN_NEXUS_WEB/
+  rules: *rules_only_tag
 
 prod-web-2-majiba-pp:
   stage: deploy-web
