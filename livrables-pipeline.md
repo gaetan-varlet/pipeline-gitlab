@@ -12,6 +12,8 @@
 
 ## Création des livrables avec Maven
 
+**DISCLAIMER** : properties des différents environnements dans le code source, la sortie du code source se fera dans une présentation future
+
 ### Ce qu'on va faire
 
 Projet **project** avec 3 modules
