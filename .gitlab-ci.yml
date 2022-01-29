@@ -1,0 +1,201 @@
+variables:
+  URL_NEXUS: nexus.insee.fr
+  URL_MAJIBA: "https://api.majiba.insee.fr/application/project/deploy"
+  APPLICATION_NAME: project
+  LISTE_MAILS: "a.b@x.fr;c.d@x.fr"
+  MODULE_MAVEN_WEB: web
+  CHEMIN_WAR_WEB: ./web/target/ROOT.war
+  CHEMIN_NEXUS_WEB: "https://nexus.insee.fr/repository/depot-local/domaine/project/web"
+  FICHIER_PROPERTIES_WEB: project.properties
+  CHEMIN_ZIP_BATCH: ./batch/target
+  MODULE_MAVEN_BATCH: batch
+  CHEMIN_NEXUS_BATCH: "https://nexus.insee.fr/repository/depot-local/domaine/project/batch"
+  FICHIER_PROPERTIES_BATCH: project-batch.properties
+
+default:
+  tags:
+    - maven-jdk11
+
+stages:
+  - tests
+  - package
+  - deploy-web
+  - deploy-batch
+
+# création d'unè règle qui ne s'appliquera que sur les tags
+.rules_only_tag:
+  rules: &rules_only_tag
+    - if: "$CI_COMMIT_TAG"
+      when: manual
+
+# création d'un script permettrant de récupérer la version du projet pour l'utiliser dans des jobs
+.script_version:
+  script: &script_version
+    - echo "MODULE_MAVEN :" $MODULE_MAVEN
+    - cd $MODULE_MAVEN
+    - export VERSION="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+    - cd ..
+    - echo "version :" $VERSION
+
+# création d'un script permettant de faire la demande de déploiement du module web via Majiba API
+.script_appel_majiba_web:
+  script: &script_appel_majiba_web
+    - echo "Deploiement automatique du module web via Majiba API"
+    - curl --insecure --request POST "$URL_MAJIBA" --header "accept:application/json" --header "X-MAJIBA-API-TOKEN:$MAJIBA_API_TOKEN" --header "Content-Type:application/json" --data "{\"moduleName\":\"\",\"priority\":1,\"url\":\"$CHEMIN_NEXUS_WEB/$APPLICATION_NAME-$VERSION.zip\",\"version\":\"$VERSION\",\"typeMaj\":\"tomcat\",\"environnement\":\"prd\",\"plateforme\":\"$PLATEFORME\",\"mail\":\"$LISTE_MAILS\"}"
+
+# création d'un script permettant de faire la demande de déploiement du module batch via Majiba API
+.script_appel_majiba_batch:
+  script: &script_appel_majiba_batch
+    - echo "Deploiement automatique du module batch via Majiba API"
+    - curl --insecure --request POST "$URL_MAJIBA" --header "accept:application/json" --header "X-MAJIBA-API-TOKEN:$MAJIBA_API_TOKEN" --header "Content-Type:application/json" --data "{\"moduleName\":\"batch\",\"priority\":1,\"url\":\"$CHEMIN_NEXUS_BATCH/$APPLICATION_NAME-batch-$VERSION.zip\",\"version\":\"$VERSION\",\"typeMaj\":\"batch\",\"environnement\":\"prd\",\"plateforme\":\"$PLATEFORME\",\"mail\":\"$LISTE_MAILS\"}"
+
+## -----------------------------------------------------------------
+## STAGE : Exécution des tests et Sonar
+## -----------------------------------------------------------------
+tests:
+  stage: tests
+  script:
+    - mvn verify
+  allow_failure: true
+
+sonarqube_main:
+  stage: tests
+  script:
+    - echo "Analyse SONAR et envoi sur $SONAR_URL du projet [${CI_PROJECT_PATH}], PROJECT_ID=[${CI_PROJECT_ID}]"
+    - mvn verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_TOKEN
+  only:
+    - main
+  allow_failure: true
+
+sonarqube_feature:
+  stage: tests
+  script:
+    - echo "Analyse SONAR et envoi sur $SONAR_URL du projet [${CI_PROJECT_PATH}], PROJECT_ID=[${CI_PROJECT_ID}]  ${CI_COMMIT_BRANCH}"
+    - mvn verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${CI_COMMIT_BRANCH}
+  except:
+    - main
+    - tags
+  allow_failure: true
+
+## -----------------------------------------------------------------
+## STAGE : Build
+## -----------------------------------------------------------------
+job-package:
+  stage: package
+  script:
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - $CHEMIN_WAR_WEB
+      - ./$MODULE_MAVEN_WEB/target/*.zip
+      - ./$MODULE_MAVEN_WEB/src/main/resources/*
+      - ./$MODULE_MAVEN_BATCH/target/*.zip
+      - ./$MODULE_MAVEN_BATCH/src/main/resources/*
+    expire_in: 12 hour
+
+## -----------------------------------------------------------------
+## STAGE : Deploy WEB
+## -----------------------------------------------------------------
+deploy-web-dev:
+  stage: deploy-web
+  needs:
+    - job-package
+  script:
+    - curl --upload-file $CHEMIN_WAR_WEB "ftp://$FTP_PROJECT_WEB_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_WEB_DEV_SERVER/depot/"
+    - curl --upload-file ./$MODULE_MAVEN_WEB/src/main/resources/$FICHIER_PROPERTIES_WEB.DEV "ftp://$FTP_PROJECT_WEB_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_WEB_DEV_SERVER/depot/$FICHIER_PROPERTIES_API"
+  when: manual
+
+prod-web-1-nexus:
+  stage: deploy-web
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_WEB
+  script:
+    - echo "Dépôt du livrable Web sur le nexus"
+    - echo "MODULE_MAVEN :" $MODULE_MAVEN
+    - *script_version
+    - mvn clean package -DskipTests
+    - curl --noproxy $URL_NEXUS --insecure --upload-file ./$MODULE_MAVEN/target/$APPLICATION_NAME-$VERSION.zip $CHEMIN_NEXUS_API/
+  rules: *rules_only_main_or_tag
+
+prod-web-2-majiba-pp:
+  stage: deploy-web
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_WEB
+    PLATEFORME: "pp"
+  script:
+    - echo "Déploiement du livrable en pré-production"
+    - *script_version
+    - *script_appel_majiba_web
+  rules: *rules_only_tag
+
+prod-web-2-majiba-pd:
+  stage: deploy-web
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_WEB
+    PLATEFORME: "pd"
+  script:
+    - echo "Déploiement du livrable en production"
+    - *script_version
+    - *script_appel_majiba_web
+  rules: *rules_only_tag
+
+## -----------------------------------------------------------------
+## STAGE : Deploy Batch
+## -----------------------------------------------------------------
+deploy_batch_dev:
+  stage: deploy-batch
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_BATCH
+  script:
+    - *script_version
+    - curl --upload-file $CHEMIN_ZIP_BATCH/$APPLICATION_NAME-batch-$VERSION.zip "ftp://$FTP_PROJECT_BATCH_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_BATCH_DEV_SERVER/depot/"
+    - curl --upload-file ./$MODULE_MAVEN_BATCH/src/main/resources/$FICHIER_PROPERTIES_BATCH.DEV "ftp://$FTP_PROJECT_BATCH_DEV_USERNAME:$FTP_PROJECT_PASSWORD@$FTP_PROJECT_BATCH_DEV_SERVER/properties/$FICHIER_PROPERTIES_BATCH"
+  when: manual
+
+prod-batch-1-nexus:
+  stage: deploy-batch
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_BATCH
+  script:
+    - echo "Dépôt du livrable Batch sur le nexus"
+    - echo "MODULE_MAVEN :" $MODULE_MAVEN
+    - *script_version
+    - mvn clean package -DskipTests
+    - curl --noproxy $URL_NEXUS --insecure --upload-file ./$MODULE_MAVEN/target/$APPLICATION_NAME-batch-$VERSION.zip $CHEMIN_NEXUS_BATCH/
+  rules: *rules_only_tag
+
+prod-batch-2-majiba-pp:
+  stage: deploy-batch
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_BATCH
+    PLATEFORME: "pp"
+  script:
+    - echo "Déploiement du livrable en pré-production"
+    - *script_version
+    - *script_appel_majiba_batch
+  rules: *rules_only_tag
+
+prod-batch-2-majiba-pd:
+  stage: deploy-batch
+  needs:
+    - job-package
+  variables:
+    MODULE_MAVEN: $MODULE_MAVEN_BATCH
+    PLATEFORME: "pd"
+  script:
+    - echo "Déploiement du livrable en production"
+    - *script_version
+    - *script_appel_majiba_batch
+  rules: *rules_only_tag

@@ -1,6 +1,23 @@
 # Déploiement automatique par pipeline Gitlab
 
-## Ce qu'on veut faire
+## Ce qu'on va faire
 
+- lancement automatique des tests et déploiement automatique sur Sonar
+- création des livrables de manière automatique
+- livraison du module web
+  - déploiement manuel du livrable (war) et des properties correspondant à l'environnement en hord production, quelque soit la branche
+  - dépôt manuel du livrable (zip) sur le nexus pour une mise en production, uniquement sur la présence d'un tag
+  - lancement manuel de majiba-api pour un déploiement en pré-production ou production, uniquement sur la présence d'un tag
+- livraison du module batch
+  - déploiement manuel du livrable (zip) et des properties correspondant à l'environnement en hord production, quelque soit la branche
+  - dépôt manuel du livrable (zip) sur le nexus pour une mise en production, uniquement sur la présence d'un tag
+  - lancement manuel de majiba-api pour un déploiement en pré-production ou production, uniquement sur la présence d'un tag
 
 ## Mise en place
+
+Création du fichier `.gitlab-ci.yml` à la racine du projet
+
+```yml
+variables:
+  URL_NEXUS: nexus.insee.fr
+```
