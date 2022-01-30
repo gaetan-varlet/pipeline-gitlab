@@ -11,6 +11,7 @@ Types de règles :
 - **Security Hotspots** (concerne la sécurité) : aucune sévérité pour ces types de règles, car ce sont des points qui doivent être analysés par un humain, qui peut alors identifier ou non une vulnérabilité
 
 Sévérité des règles :
+
 ![Sévérité des règles](sonar_severity.png)
 
 
