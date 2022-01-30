@@ -1,11 +1,25 @@
 # Règles Sonar
 
+## Rappels Sonar
+
+SonarQube est un outil de revue de code automatique
+
+Types de règles :
+- **Bugs** (concerne la fiabilité) : code qui est manisfestement erroné, qui pourrait faire planter l'application, ou corrompre les données
+- **Vulnerabilities** (concerne la sécurité) : code qui pourrait être exploité par un pirate
+- **Code Smells** (concerne la maintenabilité) : code qui pourrait conduire un maintenicien à introduire à un bug
+- **Security Hotspots** (concerne la sécurité) : aucune sévérité pour ces types de règles, car ce sont des points qui doivent être analysés par un humain, qui peut alors identifier ou non une vulnérabilité
+
+Sévérité des règles :
+![Sévérité des règles](sonar_severity.png)
+
+
 ## Strings and Boxed types should be compared using equals
 
 - https://rules.sonarsource.com/java/RSPEC-4973
 - c'est presque toujours une erreur de comparer deux instances de String ou de Boxes types (Integer, Long...) en utilisant l'égalité de référence `==` ou `!=`, car il ne s'agit pas de comparer une valeur réelle mais des emplacements en mémoire
 - bug majeur (catégorie 3/4)
-- 1378 cas sur les projets sur Sonar
+- 1378 cas sur les projets sur Sonar Insee
 
 ```java		
 String chaine1 = new String("toto");
@@ -33,7 +47,7 @@ System.out.println("comparaison même objet avec == : " + compar3); // true
 - cet appel de fermeture doit être effectué dans un bloc final, sinon une exception pourrait empêcher l'appel d'être effectué
 - de préférence, lorsque la classe implémente AutoCloseable, la ressource doit être créée en utilisant le modèle "try-with-resources" et sera fermée automatiquement
 - bug bloquant, catégorie la plus grave de Sonar
-- 1708 cas sur les projets sur Sonar
+- 1708 cas sur les projets sur Sonar Insee
 
 
 ### Exemples avec un BufferedReader

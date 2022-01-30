@@ -1,5 +1,5 @@
 # pipeline-gitlab
 
-- [Règles Sonar](sonar.md)
-- [Création des livrables avec Maven](livrables.md)
-- [Déploiement automatique par pipeline Gitlab](pipeline.md)
+- [Règles Sonar](fiches/sonar.md)
+- [Création des livrables avec Maven](fiches/livrables.md)
+- [Déploiement automatique par pipeline Gitlab](fiches/pipeline.md)
