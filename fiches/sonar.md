@@ -2,7 +2,8 @@
 
 ## Rappel Sonar
 
-SonarQube est un outil de revue de code automatique
+- **SonarQube** est un outil de revue de code automatique
+- **SonarLint** est une extension pour les IDE permettant de repérer les points à corriger directement dans l'IDE
 
 <ins>Types de règles :</ins>
 - **Bugs** (concerne la fiabilité) : code qui est manisfestement erroné, qui pourrait faire planter l'application, ou corrompre les données
