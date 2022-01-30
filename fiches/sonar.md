@@ -1,6 +1,6 @@
 # Règles Sonar
 
-## Rappels Sonar
+## Rappel Sonar
 
 SonarQube est un outil de revue de code automatique
 
