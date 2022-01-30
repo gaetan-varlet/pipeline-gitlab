@@ -4,13 +4,13 @@
 
 SonarQube est un outil de revue de code automatique
 
-Types de règles :
+<ins>Types de règles :</ins>
 - **Bugs** (concerne la fiabilité) : code qui est manisfestement erroné, qui pourrait faire planter l'application, ou corrompre les données
 - **Vulnerabilities** (concerne la sécurité) : code qui pourrait être exploité par un pirate
 - **Code Smells** (concerne la maintenabilité) : code qui pourrait conduire un maintenicien à introduire à un bug
 - **Security Hotspots** (concerne la sécurité) : aucune sévérité pour ces types de règles, car ce sont des points qui doivent être analysés par un humain, qui peut alors identifier ou non une vulnérabilité
 
-Sévérité des règles :
+<ins>Sévérité des règles :</ins>
 
 ![Sévérité des règles](sonar_severity.png)
 
