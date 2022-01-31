@@ -47,7 +47,7 @@ System.out.println("comparaison même objet avec == : " + compar3); // true
 - https://rules.sonarsource.com/java/RSPEC-2095
 - les connexions, fichiers, et autres classes qui implémentent l'interface `Closeable` ou `AutoCloseable`, doivent être fermées après usage afin de libérer les ressources qui lui sont allouées
 - cet appel de fermeture doit être effectué dans un bloc final, sinon une exception pourrait empêcher l'appel d'être effectué
-- de préférence, lorsque la classe implémente AutoCloseable, la ressource doit être créée en utilisant le modèle "try-with-resources" et sera fermée automatiquement
+- de préférence, lorsque la classe implémente AutoCloseable, la ressource doit être créée en utilisant le modèle "try-with-resources" et sera fermée automatiquement (bonne façon de faire depuis Java 7)
 - bug bloquant, catégorie la plus grave de Sonar
 - 1708 cas sur les projets sur Sonar Insee
 
