@@ -21,7 +21,7 @@
 - https://rules.sonarsource.com/java/RSPEC-4973
 - c'est presque toujours une erreur de comparer deux instances de String ou de Boxes types (Integer, Long...) en utilisant l'égalité de référence `==` ou `!=`, car il ne s'agit pas de comparer une valeur réelle mais des emplacements en mémoire
 - bug majeur (catégorie 3/4)
-- 1378 cas sur les projets sur Sonar Insee
+- 1378 cas pour les projets du SNDIP sur Sonar Insee
 
 ```java		
 String chaine1 = new String("toto");
@@ -49,7 +49,7 @@ System.out.println("comparaison même objet avec == : " + compar3); // true
 - cet appel de fermeture doit être effectué dans un bloc final, sinon une exception pourrait empêcher l'appel d'être effectué
 - de préférence, lorsque la classe implémente AutoCloseable, la ressource doit être créée en utilisant le modèle "try-with-resources" et sera fermée automatiquement (bonne façon de faire depuis Java 7)
 - bug bloquant, catégorie la plus grave de Sonar
-- 1708 cas sur les projets sur Sonar Insee
+- 1708 cas pour les projets du SNDIP sur Sonar Insee
 
 
 ### Exemples avec un BufferedReader
